@@ -40,16 +40,22 @@ def to_onehot(data, min_length):
 
 def make_data():
     global data_tr, data_te, tensor_tr, tensor_te, vocab, vocab_size
+    
     dataset_tr = 'data/20news_clean/train.txt.npy'
     data_tr = np.load(dataset_tr)
+    print('###############################')
+    print(data_tr)
     dataset_te = 'data/20news_clean/test.txt.npy'
     data_te = np.load(dataset_te)
     vocab = 'data/20news_clean/vocab.pkl'
+    print('vocabbbbbbb')
+    print(vocab)
     vocab = pickle.load(open(vocab,'r'))
     vocab_size=len(vocab)
     #--------------convert to one-hot representation------------------
     print 'Converting data to one-hot representation'
     data_tr = np.array([to_onehot(doc.astype('int'),vocab_size) for doc in data_tr if np.sum(doc)!=0])
+    print('one hot encoded data:', data_tr)
     data_te = np.array([to_onehot(doc.astype('int'),vocab_size) for doc in data_te if np.sum(doc)!=0])
     #--------------print the data dimentions--------------------------
     print 'Data Loaded'
