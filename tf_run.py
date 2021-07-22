@@ -29,7 +29,7 @@ vocab_size=len(vocab)
 print('Converting data to one-hot representation')
 data_tr = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_tr if np.sum(doc)!=0])
 data_te = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_te if np.sum(doc)!=0])
-with open("onehotencoded","w") as f:
+with open("data/20news_clean/onehotencoded.txt","w") as f:
     wr = csv.writer(f,delimiter=" ")
     wr.writerows(data_tr)
 
