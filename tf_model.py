@@ -83,6 +83,16 @@ class VAE(object):
                                    dtype=tf.float32)
             self.z = tf.add(self.posterior_mean,
                             tf.multiply(tf.sqrt(tf.exp(self.posterior_logvar)), eps))         # reparameterization z
+            zz = self.z 
+            print('printing z')
+            print(z) 
+            print(type(z))
+            print(z.shape)
+            print('printing self z')
+            print(self.z)
+            print(type(self.z))
+            print(self.z.shape)
+            
             self.posterior_var = tf.exp(self.posterior_logvar) 
 
         p = slim.layers.softmax(self.z)
@@ -178,3 +188,6 @@ class VAE(object):
         z = np.concatenate(embs, axis=0)
 
         return z
+    
+   
+        
