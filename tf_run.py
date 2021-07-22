@@ -32,6 +32,8 @@ data_te = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_te if n
 with open("data/20news_clean/onehotencoded.txt","w") as f:
     wr = csv.writer(f,delimiter=" ")
     wr.writerows(data_tr)
+print('type of data_tr:')
+print(type(data_tr))
 
 #--------------print the data dimentions--------------------------
 print('Data Loaded')
