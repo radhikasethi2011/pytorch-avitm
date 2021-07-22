@@ -31,8 +31,14 @@ class VAE(object):
         # tf Graph input
         self.x = tf.placeholder(tf.float32, [None, network_architecture["n_input"]], name='input')
         self.keep_prob = tf.placeholder(tf.float32, name='keep_prob')
+        
 
         self.h_dim = (network_architecture["n_z"]) # had a float before
+        
+        self.test_feature_placeholder = tf.placeholder_with_default(
+                input=tf.zeros([self.batch_size, self.h_dim], dtype=tf.float32),
+                shape=[None, self.h_dim])
+        
         self.a = 1*np.ones((1 , self.h_dim)).astype(np.float32)                         # a    = 1
         self.prior_mean = tf.constant((np.log(self.a).T-np.mean(np.log(self.a),1)).T)          # prior_mean  = 0
         self.prior_var = tf.constant(  ( ( (1.0/self.a)*( 1 - (2.0/self.h_dim) ) ).T +       # prior_var = 0.99 + 0.005 = 0.995
@@ -40,6 +46,7 @@ class VAE(object):
         self.prior_logvar = tf.log(self.prior_var)
 
         self._create_network()
+        self.embeddings = self.net.embed(self.test_feature_placeholder)
         with tf.name_scope('cost'):
             self._create_loss_optimizer()
 
@@ -123,3 +130,51 @@ class VAE(object):
         """
         theta_ = self.sess.run((self.z),feed_dict={self.x: np.expand_dims(X, axis=0),self.keep_prob: 1.0})
         return theta_
+    
+    def embed(self,
+              X,
+              batch_size=64):
+        """
+        Embed data into the latent space of a trained model
+        Parameters
+        ----------
+        X : array, shape (n_samples, n_features)
+            Data to embed.
+        batch_size : int, optional (default: 64)
+            Batch size for processing input data.
+        Returns
+        -------
+        z : array, shape (n_samples, dim_latent)
+            Embedding of the input data in latent space.
+        """
+
+        X = X.astype(np.float32)
+
+        num_data = X.shape[0]
+        num_batches_full = int(num_data / batch_size)
+        batch_last = num_data - (num_batches_full * batch_size)
+        if batch_last > 0:
+            num_batches = num_batches_full + 1
+        else:
+            num_batches = num_batches_full
+
+        embs = []
+
+        for k in range(num_batches):
+
+            if k == num_batches_full:
+                input_batch = X[k * batch_size:]
+            else:
+                input_batch = X[k * batch_size: (k + 1) * batch_size]
+
+       
+
+            emb = self.sess.run([self.embeddings],
+                                feed_dict={self.test_feature_placeholder: input_batch})
+
+            embs.append(emb[0])
+
+        # Concatenate
+        z = np.concatenate(embs, axis=0)
+
+        return z
