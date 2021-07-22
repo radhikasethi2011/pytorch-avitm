@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 import itertools,time
 import sys, os
@@ -27,16 +28,23 @@ vocab = pickle.load(open(vocab,'rb'))
 vocab_size=len(vocab)
 #--------------convert to one-hot representation------------------
 print('Converting data to one-hot representation')
-data_tr = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_tr if np.sum(doc)!=0])
-data_te = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_te if np.sum(doc)!=0])
-with open("data/20news_clean/onehotencoded.txt","w") as f:
-    wr = csv.writer(f,delimiter=" ")
-    wr.writerows(data_tr)
-print('type of data_tr:')
-print(type(data_tr))
+#data_tr = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_tr if np.sum(doc)!=0])
+#data_te = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_te if np.sum(doc)!=0])
+
+df = pd.read_csv('data/20news_clean/edge_allencode.mat.txt', sep='\t')
+df.reset_index(drop=True, inplace=True)
+data_tr = df.to_numpy()
+data_te = df.to_numpy()
+#with open("data/20news_clean/onehotencoded.txt","w") as f:
+    #wr = csv.writer(f,delimiter=" ")
+    #wr.writerows(data_tr)
+#print('type of data_tr:')
+#print(type(data_tr))
 
 #--------------print the data dimentions--------------------------
 print('Data Loaded')
+print(data_tr[0])
+print(data_tr[0].shape)
 print('Dim Training Data',data_tr.shape)
 print('Dim Test Data',data_te.shape)
 '''-----------------------------'''
