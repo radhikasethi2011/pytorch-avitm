@@ -199,6 +199,9 @@ def main(argv):
     vae,emb = train(network_architecture, minibatches,m, training_epochs=e,batch_size=batch_size,learning_rate=learning_rate)
     print_top_words(emb, list(zip(*sorted(vocab.items(), key=lambda x: x[1])))[0])
     print_perp(vae)
+    print('embeddings')
+    print(emb)
+    print(emb.shape)
 
 if __name__ == "__main__":
    main(sys.argv[1:])
