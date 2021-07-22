@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import pickle
 import sys, getopt
 from tf_model import VAE
+import csv
 '''-----------Data--------------'''
 def onehot(data, min_length):
     return np.bincount(data, minlength=min_length)
@@ -28,6 +29,10 @@ vocab_size=len(vocab)
 print('Converting data to one-hot representation')
 data_tr = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_tr if np.sum(doc)!=0])
 data_te = np.array([onehot(doc.astype('int'),vocab_size) for doc in data_te if np.sum(doc)!=0])
+with open("onehotencoded","w") as f:
+    wr = csv.writer(f,delimiter=" ")
+    wr.writerows(data_tr)
+
 #--------------print the data dimentions--------------------------
 print('Data Loaded')
 print('Dim Training Data',data_tr.shape)
