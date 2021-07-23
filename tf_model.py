@@ -35,9 +35,11 @@ class VAE(object):
 
         self.h_dim = (network_architecture["n_z"]) # had a float before
         
-        self.test_feature_placeholder = tf.placeholder_with_default(
-                input=tf.zeros([self.batch_size, self.h_dim], dtype=tf.float32),
-                shape=[None, self.h_dim])
+        self.test_feature_placeholder = tf.placeholder(
+                tf.float32, [None, self.h_dim], name = 'test_feature_placeholder')
+        self.arr = np.empty((0,self.h_dim))
+
+        
         
         self.a = 1*np.ones((1 , self.h_dim)).astype(np.float32)                         # a    = 1
         self.prior_mean = tf.constant((np.log(self.a).T-np.mean(np.log(self.a),1)).T)          # prior_mean  = 0
@@ -46,12 +48,15 @@ class VAE(object):
         self.prior_logvar = tf.log(self.prior_var)
 
         self._create_network()
-        print('netwrork dimensions')
-        print(self.h_dim)
-        self.embeddings = self.embed(self.test_feature_placeholder)
+        #print('netwrork dimensions')
+        #print(self.h_dim) it's right = 50
+        
+        #self.embeddings = self.embed(self.test_feature_placeholder)
+        self.embeddings = self.embed(self.arr)
         print('printing self.embeddings')
         print(self.embeddings)
         print(self.embeddings.shape)
+        
         with tf.name_scope('cost'):
             self._create_loss_optimizer()
 
@@ -74,6 +79,9 @@ class VAE(object):
         n_z = self.network_architecture['n_z']
         n_hidden_gener_1 = self.network_architecture['n_hidden_gener_1']
         en1 = slim.layers.linear(self.x, self.network_architecture['n_hidden_recog_1'], scope='FC_en1')
+        print("printing self x ")
+        print(self.x)
+        print(self.x.shape)
         en1 = tf.nn.softplus(en1, name='softplus1')
         en2 = slim.layers.linear(en1,    self.network_architecture['n_hidden_recog_2'], scope='FC_en2')
         en2 = tf.nn.softplus(en2, name='softplus2')
@@ -89,6 +97,7 @@ class VAE(object):
             self.z = tf.add(self.posterior_mean,
                             tf.multiply(tf.sqrt(tf.exp(self.posterior_logvar)), eps))         # reparameterization z
             zz = self.z 
+            """
             print('printing z')
             print(zz) 
             print(type(zz))
@@ -97,7 +106,7 @@ class VAE(object):
             print(self.z)
             print(type(self.z))
             print(self.z.shape)
-            
+            """
             self.posterior_var = tf.exp(self.posterior_logvar) 
 
         p = slim.layers.softmax(self.z)
@@ -162,7 +171,7 @@ class VAE(object):
         z : array, shape (n_samples, dim_latent)
             Embedding of the input data in latent space.
         """
-
+        
         X = X.astype(np.float32)
 
         num_data = X.shape[0]
@@ -185,13 +194,13 @@ class VAE(object):
        
 
             emb = self.sess.run([self.embeddings],
-                                feed_dict={self.test_feature_placeholder: input_batch})
+                                feed_dict={self.arr: input_batch})
 
             embs.append(emb[0])
 
         # Concatenate
         z = np.concatenate(embs, axis=0)
-
+        
         return z
     
    
