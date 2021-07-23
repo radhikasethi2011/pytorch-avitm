@@ -36,8 +36,8 @@ class VAE(object):
         self.h_dim = (network_architecture["n_z"]) # had a float before
         
         self.test_feature_placeholder = tf.placeholder(
-                tf.float32, [None, self.h_dim], name = 'test_feature_placeholder')
-        self.arr = np.empty((0,self.h_dim))
+                tf.float32, [self.batch_size, self.h_dim], name = 'test_feature_placeholder')
+        self.arr = np.empty((self.batch_size,self.h_dim))
 
         
         
@@ -192,7 +192,7 @@ class VAE(object):
                 input_batch = X[k * batch_size: (k + 1) * batch_size]
 
        
-
+            self.sess = tf.InteractiveSession()
             emb = self.sess.run([self.embeddings],
                                 feed_dict={self.arr: input_batch})
 
