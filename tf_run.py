@@ -99,6 +99,7 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
                                  batch_size=batch_size)
     writer = tf.summary.FileWriter('logs', tf.get_default_graph())
     emb=0
+    embedss = []
     # Training cycle
     for epoch in range(training_epochs):
         avg_cost = 0.
@@ -108,7 +109,10 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
             batch_xs = next(minibatches)
             # Fit training using batch data
             cost,emb = vae.partial_fit(batch_xs)
-            embedding1 = vae.embed(emb,batch_xs)
+            mean = vae.get_mean()
+            embedss.append(mean)
+            #print(vae.posterior_mean)
+            #embedding1 = vae.embed(emb,batch_xs)
             #print('printing embeding from get embed function I wrote from tf run py calling vae embed  ')
             #print(embedding1)
             #print(embedding1.shape)
@@ -126,7 +130,7 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
         if epoch % display_step == 0:
             print("Epoch:", '%04d' % (epoch+1), \
                   "cost=", "{:.9f}".format(avg_cost))
-    return vae,emb
+    return vae,emb,embedss
 
 def print_top_words(beta, feature_names, n_top_words=10):
     print('---------------Printing the Topics------------------')
@@ -206,7 +210,11 @@ def main(argv):
     network_architecture,batch_size,learning_rate=make_network(f,s,t,b,r)
     print(network_architecture)
     print(opts)
-    vae,emb = train(network_architecture, minibatches,m, training_epochs=e,batch_size=batch_size,learning_rate=learning_rate)
+    vae,emb,embedss = train(network_architecture, minibatches,m, training_epochs=e,batch_size=batch_size,learning_rate=learning_rate)
+    print('printing embeds from posterior mean')
+    print(embedss)
+    print(embedss.shape)
+    print(len(embedss))
     print_top_words(emb, list(zip(*sorted(vocab.items(), key=lambda x: x[1])))[0])
     print_perp(vae)
    
