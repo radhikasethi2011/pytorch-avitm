@@ -103,11 +103,9 @@ class VAE(object):
                             tf.multiply(tf.sqrt(tf.exp(self.posterior_logvar)), eps))         # reparameterization z
             zz = self.z 
             
-            print('printing z - tf print ')
+            
             #self.sess = tf.compact.v1.InteractiveSession() 
-            z1 = self.sess.run(self.z)
-            print(z1)
-            print('##########')
+            """
             print(zz) 
             print(type(zz))
             print(zz.shape)
@@ -115,9 +113,14 @@ class VAE(object):
             print(self.z)
             print(type(self.z))
             print(self.z.shape)
-            
+            """
             self.posterior_var = tf.exp(self.posterior_logvar) 
-
+        print('printing z - tf print ')
+        #self.sess = tf.InteractiveSession()
+        #z1 = self.sess.run(self.z)
+        z1 = tf.print(self.z)
+        print(z1)
+        print('##########')
         p = slim.layers.softmax(self.z)
         p_do = slim.layers.dropout(p, self.keep_prob, scope='p_dropped')               # dropout(softmax(z))
         decoded = slim.layers.linear(p_do, n_hidden_gener_1, scope='FC_decoder')
