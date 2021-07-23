@@ -93,7 +93,9 @@ class VAE(object):
         self.posterior_logvar = slim.layers.linear(en2_do, self.network_architecture['n_z'], scope='FC_logvar')
         self.posterior_mean   = slim.layers.batch_norm(self.posterior_mean, scope='BN_mean')
         self.posterior_logvar = slim.layers.batch_norm(self.posterior_logvar, scope='BN_logvar')
-
+        print('printing posterior mean ')
+        print(self.posterior_mean)
+        print(self.posterior_mean.shape)
         with tf.name_scope('z_scope'):
             eps = tf.random_normal((self.batch_size, n_z), 0, 1,                            # take noise
                                    dtype=tf.float32)
@@ -196,16 +198,16 @@ class VAE(object):
 
        
             #self.sess = tf.InteractiveSession()
-            embb = self.sess.run([emb],
-                                feed_dict={self.arr: input_batch})
+            #embb = self.sess.run([emb],
+                                #feed_dict={self.arr: input_batch})
             #emb = self.sess.run((self.z),feed_dict={self.arr: input_batch})
-            print('printing inside embed function')
-            print(embb)
-            embs.append(embb[0])
+            #print('printing inside embed function')
+            #print(embb)
+            #embs.append(embb[0])
 
         # Concatenate
-        z = np.concatenate(embs, axis=0)
-        
+        #z = np.concatenate(embs, axis=0)
+        z = 50
         return z
     
    
