@@ -51,8 +51,8 @@ class VAE(object):
         #print('netwrork dimensions')
         #print(self.h_dim) it's right = 50
         
-        #self.embeddings = self.embed(self.test_feature_placeholder)
-        self.embeddings = self.embed(self.arr)
+        self.embeddings = self.embed(self.test_feature_placeholder)
+        #self.embeddings = self.embed(self.arr)
         print('printing self.embeddings')
         print(self.embeddings)
         print(self.embeddings.shape)
@@ -192,7 +192,7 @@ class VAE(object):
                 input_batch = X[k * batch_size: (k + 1) * batch_size]
 
        
-            self.sess = tf.InteractiveSession()
+            #self.sess = tf.InteractiveSession()
             emb = self.sess.run([self.embeddings],
                                 feed_dict={self.arr: input_batch})
 
