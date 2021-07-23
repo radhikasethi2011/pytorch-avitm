@@ -109,7 +109,7 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
             # Fit training using batch data
             cost,emb = vae.partial_fit(batch_xs)
             embedding1 = vae.embed(batch_xs)
-            print('printing embeding from get embed function I wrote')
+            print('printing embeding from get embed function I wrote from tf run py calling vae embed  ')
             print(embedding1)
             print(embedding1.shape)
             print(type(embedding1)
