@@ -46,7 +46,12 @@ class VAE(object):
         self.prior_logvar = tf.log(self.prior_var)
 
         self._create_network()
-        self.embeddings = self.net.embed(self.test_feature_placeholder)
+        print('netwrork dimensions')
+        print(self.h_dim)
+        self.embeddings = self.embed(self.test_feature_placeholder)
+        print('printing self.embeddings')
+        print(self.embeddings)
+        print(self.embeddings.shape)
         with tf.name_scope('cost'):
             self._create_loss_optimizer()
 
@@ -85,9 +90,9 @@ class VAE(object):
                             tf.multiply(tf.sqrt(tf.exp(self.posterior_logvar)), eps))         # reparameterization z
             zz = self.z 
             print('printing z')
-            print(z) 
-            print(type(z))
-            print(z.shape)
+            print(zz) 
+            print(type(zz))
+            print(zz.shape)
             print('printing self z')
             print(self.z)
             print(type(self.z))
