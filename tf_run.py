@@ -109,10 +109,10 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
             # Fit training using batch data
             cost,emb = vae.partial_fit(batch_xs)
             embedding1 = vae.embed(emb,batch_xs)
-            print('printing embeding from get embed function I wrote from tf run py calling vae embed  ')
-            print(embedding1)
-            print(embedding1.shape)
-            print(type(embedding1))
+            #print('printing embeding from get embed function I wrote from tf run py calling vae embed  ')
+            #print(embedding1)
+            #print(embedding1.shape)
+            #print(type(embedding1))
             # Compute average loss
             avg_cost += cost / n_samples_tr * batch_size
 
