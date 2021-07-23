@@ -102,8 +102,12 @@ class VAE(object):
             self.z = tf.add(self.posterior_mean,
                             tf.multiply(tf.sqrt(tf.exp(self.posterior_logvar)), eps))         # reparameterization z
             zz = self.z 
-            """
-            print('printing z')
+            
+            print('printing z - tf print ')
+            #self.sess = tf.compact.v1.InteractiveSession() 
+            z1 = self.sess.run(self.z)
+            print(z1)
+            print('##########')
             print(zz) 
             print(type(zz))
             print(zz.shape)
@@ -111,7 +115,7 @@ class VAE(object):
             print(self.z)
             print(type(self.z))
             print(self.z.shape)
-            """
+            
             self.posterior_var = tf.exp(self.posterior_logvar) 
 
         p = slim.layers.softmax(self.z)
@@ -119,7 +123,7 @@ class VAE(object):
         decoded = slim.layers.linear(p_do, n_hidden_gener_1, scope='FC_decoder')
 
         self.x_reconstr_mean = tf.nn.softmax(slim.layers.batch_norm(decoded, scope='BN_decoder'))                    # softmax(bn(50->1995))
-
+        print("###################################")
         print(self.x_reconstr_mean)
 
     def _create_loss_optimizer(self):
@@ -148,6 +152,10 @@ class VAE(object):
         decoder_weight = [v for v in tf.global_variables() if v.name=='FC_decoder/weights:0'][0]
         opt, cost,emb = self.sess.run((self.optimizer, self.cost, decoder_weight),feed_dict={self.x: X,self.keep_prob: .8})
         return cost,emb
+
+    def get_mean(self):
+      return self.posterior_mean
+
 
     def test(self, X):
         """Test the model and return the lowerbound on the log-likelihood.
