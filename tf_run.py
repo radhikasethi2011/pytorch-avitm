@@ -99,7 +99,7 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
                                  batch_size=batch_size)
     writer = tf.summary.FileWriter('logs', tf.get_default_graph())
     emb=0
-    embedss = []
+    thetaa = []
     # Training cycle
     for epoch in range(training_epochs):
         avg_cost = 0.
@@ -109,8 +109,13 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
             batch_xs = next(minibatches)
             # Fit training using batch data
             cost,emb = vae.partial_fit(batch_xs)
-            mean = vae.get_mean()
-            embedss.append(mean)
+            theta = vae.topic_prop(batch_xs)
+            thetaa.append(theta)
+            print("Theta shape: ",theta.shape)
+            #mean = vae.get_mean()
+            #print("print mean: ", mean)
+            #print("print mean shape: ", mean.shape)
+            #embedss.append(mean)
             #print(vae.posterior_mean)
             #embedding1 = vae.embed(emb,batch_xs)
             #print('printing embeding from get embed function I wrote from tf run py calling vae embed  ')
@@ -126,11 +131,12 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
                 # return vae,emb
                 sys.exit()
 
+        thetaa1 = np.asarray(thetaa)
         # Display logs per epoch step
         if epoch % display_step == 0:
             print("Epoch:", '%04d' % (epoch+1), \
                   "cost=", "{:.9f}".format(avg_cost))
-    return vae,emb,embedss
+    return vae,emb,thetaa1
 
 def print_top_words(beta, feature_names, n_top_words=10):
     print('---------------Printing the Topics------------------')
@@ -141,12 +147,22 @@ def print_top_words(beta, feature_names, n_top_words=10):
 
 def print_perp(model):
     cost=[]
+    #thetaa = []
     for doc in docs_te:
+        #print("doc: ",doc)  
+        #print("doc shape: ", doc.shape)
         doc = doc.astype('float32')
         n_d = np.sum(doc)
         c=model.test(doc)
+        #theta = model.topic_prop(doc)
+        #print("thea: ", theta)
+        #print("theta shape: ", theta.shape)
+        #thetaa.append(theta)
+        #print("cost:",c)
         cost.append(c/n_d)
     print('The approximated perplexity is: ',(np.exp(np.mean(np.array(cost)))))
+    #thetaa1 = np.asarray(thetaa)
+    #return thetaa1
 
 def embed(batch_size):
   _,z = train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
@@ -210,13 +226,17 @@ def main(argv):
     network_architecture,batch_size,learning_rate=make_network(f,s,t,b,r)
     print(network_architecture)
     print(opts)
-    vae,emb,embedss = train(network_architecture, minibatches,m, training_epochs=e,batch_size=batch_size,learning_rate=learning_rate)
-    print('printing embeds from posterior mean')
-    print(embedss)
-    print(embedss.shape)
-    print(len(embedss))
+    vae,emb,thetaa = train(network_architecture, minibatches,m, training_epochs=e,batch_size=batch_size,learning_rate=learning_rate)
+    #print(len(embedss))
     print_top_words(emb, list(zip(*sorted(vocab.items(), key=lambda x: x[1])))[0])
     print_perp(vae)
+    #theta1 = vae.topic_prop
+    print("PRINTING FULL THETA ")
+    #print(thetaa)
+    print(len(thetaa))
+    print(len(thetaa[0]))
+    print(thetaa.shape)
+    print(type(thetaa))
    
 if __name__ == "__main__":
    main(sys.argv[1:])
