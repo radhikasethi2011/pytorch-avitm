@@ -108,7 +108,7 @@ def train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
             batch_xs = next(minibatches)
             # Fit training using batch data
             cost,emb = vae.partial_fit(batch_xs)
-            embedding1 = vae.embed(batch_xs)
+            embedding1 = vae.embed(emb,batch_xs)
             print('printing embeding from get embed function I wrote from tf run py calling vae embed  ')
             print(embedding1)
             print(embedding1.shape)
@@ -143,6 +143,11 @@ def print_perp(model):
         c=model.test(doc)
         cost.append(c/n_d)
     print('The approximated perplexity is: ',(np.exp(np.mean(np.array(cost)))))
+
+def embed(batch_size):
+  _,z = train(network_architecture, minibatches, type='prodlda',learning_rate=0.001,
+          batch_size=200, training_epochs=100, display_step=5)
+
 
 def main(argv):
     global vae, emb
@@ -205,5 +210,6 @@ def main(argv):
     print_top_words(emb, list(zip(*sorted(vocab.items(), key=lambda x: x[1])))[0])
     print_perp(vae)
    
+
 if __name__ == "__main__":
    main(sys.argv[1:])
