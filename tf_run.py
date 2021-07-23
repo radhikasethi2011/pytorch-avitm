@@ -205,6 +205,5 @@ def main(argv):
     print_top_words(emb, list(zip(*sorted(vocab.items(), key=lambda x: x[1])))[0])
     print_perp(vae)
    
-
 if __name__ == "__main__":
    main(sys.argv[1:])
