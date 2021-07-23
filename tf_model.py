@@ -101,7 +101,12 @@ class VAE(object):
                                    dtype=tf.float32)
             self.z = tf.add(self.posterior_mean,
                             tf.multiply(tf.sqrt(tf.exp(self.posterior_logvar)), eps))         # reparameterization z
-            zz = self.z 
+            
+            #sess = tf.InteractiveSession()
+            #zz = sess.run(self.z)
+            #zz = self.z 
+            #zzz = zz.eval()
+            #print("printing from name scope: ", zzz)
             
             
             #self.sess = tf.compact.v1.InteractiveSession() 
@@ -115,12 +120,14 @@ class VAE(object):
             print(self.z.shape)
             """
             self.posterior_var = tf.exp(self.posterior_logvar) 
-        print('printing z - tf print ')
+        #print('printing z - tf print ')
+        #zzz = zz.eval()
+        #print("printing outside name scope: ", zzz)
         #self.sess = tf.InteractiveSession()
         #z1 = self.sess.run(self.z)
-        z1 = tf.print(self.z)
-        print(z1)
-        print('##########')
+        #z1 = tf.print(self.z)
+        #print("PRIINTING Z1", z1)
+        #print('##########')
         p = slim.layers.softmax(self.z)
         p_do = slim.layers.dropout(p, self.keep_prob, scope='p_dropped')               # dropout(softmax(z))
         decoded = slim.layers.linear(p_do, n_hidden_gener_1, scope='FC_decoder')
@@ -157,7 +164,8 @@ class VAE(object):
         return cost,emb
 
     def get_mean(self):
-      return self.posterior_mean
+        z = self.sess.run(self.z)
+        return z
 
 
     def test(self, X):
@@ -168,7 +176,12 @@ class VAE(object):
     def topic_prop(self, X):
         """heta_ is the topic proportion vector. Apply softmax transformation to it before use.
         """
-        theta_ = self.sess.run((self.z),feed_dict={self.x: np.expand_dims(X, axis=0),self.keep_prob: 1.0})
+        #theta_ = self.sess.run((self.z),feed_dict={self.x: np.expand_dims(X, axis=0),self.keep_prob: 1.0})
+
+        theta_ = self.sess.run((self.z),feed_dict={self.x:  np.expand_dims(X,axis=0),self.keep_prob: 1.0})
+        print("X Shape: ", X.shape)
+        #print("print theta")
+        #print(theta_)
         return theta_
     
     def embed(self, emb,
