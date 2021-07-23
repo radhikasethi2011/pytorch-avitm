@@ -10,6 +10,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pickle
 
+
+
 slim = tf.contrib.slim
 
 tf.reset_default_graph()
@@ -51,11 +53,12 @@ class VAE(object):
         #print('netwrork dimensions')
         #print(self.h_dim) it's right = 50
         
-        self.embeddings = self.embed(self.test_feature_placeholder)
+        #self.embed()
+        #self.embeddings = tf_run.embed(self.test_feature_placeholder)
         #self.embeddings = self.embed(self.arr)
-        print('printing self.embeddings')
-        print(self.embeddings)
-        print(self.embeddings.shape)
+        #print('printing self.embeddings')
+        #print(self.embeddings)
+        #print(self.embeddings.shape)
         
         with tf.name_scope('cost'):
             self._create_loss_optimizer()
@@ -155,7 +158,7 @@ class VAE(object):
         theta_ = self.sess.run((self.z),feed_dict={self.x: np.expand_dims(X, axis=0),self.keep_prob: 1.0})
         return theta_
     
-    def embed(self,
+    def embed(self, emb,
               X,
               batch_size=64):
         """
@@ -193,10 +196,12 @@ class VAE(object):
 
        
             #self.sess = tf.InteractiveSession()
-            emb = self.sess.run([self.embeddings],
+            embb = self.sess.run([emb],
                                 feed_dict={self.arr: input_batch})
-
-            embs.append(emb[0])
+            #emb = self.sess.run((self.z),feed_dict={self.arr: input_batch})
+            print('printing inside embed function')
+            print(embb)
+            embs.append(embb[0])
 
         # Concatenate
         z = np.concatenate(embs, axis=0)
